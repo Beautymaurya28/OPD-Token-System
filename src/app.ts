@@ -1,10 +1,11 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import cors from 'cors';
 import { initializeSystem, getSystemOverview } from './store/seedData';
 import doctorRoutes from './routes/doctor.routes';
 import slotRoutes from './routes/slot.routes';
 import tokenRoutes from './routes/token.routes';
 import systemRoutes from './routes/system.routes';
+
 const app = express();
 
 // Middleware
@@ -16,12 +17,15 @@ app.use('/api/system', systemRoutes);
 initializeSystem();
 
 // Health check
-app.get('/health', (_req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+app.get('/health', (_req: Request, res: Response) => {
+  res.json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+  });
 });
 
 // System overview endpoint
-app.get('/api/system/overview', (_req, res) => {
+app.get('/api/system/overview', (_req: Request, res: Response) => {
   try {
     const overview = getSystemOverview();
     res.json({
@@ -36,8 +40,8 @@ app.get('/api/system/overview', (_req, res) => {
   }
 });
 
-// System reset endpoint (useful for testing)
-app.post('/api/system/reset', (_req, res) => {
+// System reset endpoint (testing only)
+app.post('/api/system/reset', (_req: Request, res: Response) => {
   try {
     initializeSystem();
     res.json({
@@ -52,10 +56,10 @@ app.post('/api/system/reset', (_req, res) => {
   }
 });
 
-app.post('/debug', (req, res) => {
+// Debug endpoint
+app.post('/debug', (req: Request, res: Response) => {
   res.json({ received: req.body });
 });
-
 
 // API Routes
 app.use('/api/doctors', doctorRoutes);
@@ -63,7 +67,7 @@ app.use('/api/slots', slotRoutes);
 app.use('/api/tokens', tokenRoutes);
 
 // 404 handler
-app.use((_req, res) => {
+app.use((_req: Request, res: Response) => {
   res.status(404).json({
     success: false,
     error: 'Route not found',
