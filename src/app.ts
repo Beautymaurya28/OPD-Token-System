@@ -66,6 +66,23 @@ app.use('/api/doctors', doctorRoutes);
 app.use('/api/slots', slotRoutes);
 app.use('/api/tokens', tokenRoutes);
 
+
+
+app.get('/', (_req, res) => {
+  res.json({
+    service: 'OPD Token Allocation Engine',
+    status: 'running',
+    environment: process.env.NODE_ENV || 'production',
+    endpoints: {
+      health: '/health',
+      systemOverview: '/api/system/overview',
+      doctors: '/api/doctors',
+      tokens: '/api/tokens'
+    },
+    note: 'This is a backend-only service. Use API endpoints to interact.'
+  });
+});
+
 // 404 handler
 app.use((_req: Request, res: Response) => {
   res.status(404).json({
